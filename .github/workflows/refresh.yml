@@ -81,4 +81,4 @@ jobs:
           echo "### Knowledge Base Refresh Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Schedule:** Weekly (Sunday 02:00 UTC)" >> $GITHUB_STEP_SUMMARY
           echo "- **Max papers per query:** ${{ github.event.inputs.max_papers || '30' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **HF Space updated:** " >> $GITHUB_STEP_SUMMARY
+          echo "- **HF Space updated:** ✅" >> $GITHUB_STEP_SUMMARY
