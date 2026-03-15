@@ -131,7 +131,7 @@ class DesignGenerator:
             },
             {
                 "id": "B", "name": f"Aluminium-Intensive {component}",
-                "concept": f"Multi-extrusion aluminium design with self-piercing rivet joining. 35% weight saving vs. steel baseline.",
+                "concept": "Multi-extrusion aluminium design with self-piercing rivet joining. 35% weight saving vs. steel baseline.",
                 "material": "6061-T6 Aluminium Alloy",
                 "manufacturing_process": "Extrusion + SPR joining",
                 "estimated_weight_kg": 2.3, "estimated_cost_index": 3,
@@ -142,7 +142,7 @@ class DesignGenerator:
             },
             {
                 "id": "C", "name": f"Topology-Optimised AM {component}",
-                "concept": f"LPBF metal AM component with topology-optimised geometry. Maximum performance-to-weight ratio.",
+                "concept": "LPBF metal AM component with topology-optimised geometry. Maximum performance-to-weight ratio.",
                 "material": "AlSi10Mg (AM Grade)",
                 "manufacturing_process": "Laser Powder Bed Fusion (LPBF)",
                 "estimated_weight_kg": 1.4, "estimated_cost_index": 5,

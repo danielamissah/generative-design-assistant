@@ -109,10 +109,10 @@ class RequirementsParser:
 
     def _fallback_parse(self, text: str) -> dict:
         """Rule-based fallback when LLM fails."""
-        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        lines = [line.strip() for line in text.split('\n') if line.strip()]
         return {
             "component_name":        lines[0] if lines else "Component",
-            "functional_requirements": [l for l in lines[1:4]],
+            "functional_requirements": list(lines[1:4]),
             "performance_targets":   {},
             "constraints":           [],
             "interface_requirements": [],

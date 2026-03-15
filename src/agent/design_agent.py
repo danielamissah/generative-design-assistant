@@ -132,7 +132,9 @@ class DesignAgent:
                     mlflow.log_metric("pipeline_ms", total_ms)
                     mlflow.log_metric("n_knowledge_sources", len(knowledge))
                     # Artifact
-                    import json, tempfile, os
+                    import json
+                    import tempfile
+                    import os
                     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
                         json.dump(result["report"], f, indent=2)
                         tmp = f.name

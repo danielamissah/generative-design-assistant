@@ -3,14 +3,12 @@ Word Document Exporter for Generative Design Feasibility Report.
 Uses python-docx for pure Python DOCX generation.
 """
 
-import os
 import re
 from datetime import datetime
 from pathlib import Path
 
 from docx import Document
 from docx.shared import Pt, RGBColor, Inches, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement

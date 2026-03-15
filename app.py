@@ -5,7 +5,6 @@ HF Spaces entry point — with step-by-step progress and PDF export.
 
 import sys
 import os
-import json
 sys.path.insert(0, os.path.dirname(__file__))
 
 import gradio as gr
@@ -157,7 +156,7 @@ def run_agent(requirements_text: str):
                gr.update(visible=True), gr.update(visible=True),
                gr.update(visible=False), gr.update(visible=False))
 
-    except Exception as e:
+    except Exception:
         yield (f"Error: {str(e)}", "", "",
                gr.update(visible=True), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
@@ -171,7 +170,7 @@ def export_to_pdf():
     try:
         path = export_pdf(last_result)
         return gr.update(visible=True, value=path)
-    except Exception as e:
+    except Exception:
         return gr.update(visible=False)
 
 
@@ -182,7 +181,7 @@ def export_to_docx():
     try:
         path = export_docx(last_result)
         return gr.update(visible=True, value=path)
-    except Exception as e:
+    except Exception:
         return gr.update(visible=False)
 
 
@@ -198,7 +197,7 @@ def reset():
 with gr.Blocks(title="Generative Design Assistant") as demo:
 
     gr.Markdown("""
-    # ⚙️ Generative Design Assistant
+    # Generative Design Assistant
     ### AI-Powered Engineering Requirements Analysis & Design Generation
 
     Describe your engineering component requirements in plain text. The agent will:

@@ -5,7 +5,6 @@ Generates a professionally formatted PDF report combining
 Requirements, Design Alternatives, and Feasibility Report sections.
 """
 
-import os
 import re
 from datetime import datetime
 from pathlib import Path
@@ -18,7 +17,6 @@ from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
     HRFlowable, PageBreak
 )
-from reportlab.lib.enums import TA_LEFT, TA_CENTER
 from loguru import logger
 
 

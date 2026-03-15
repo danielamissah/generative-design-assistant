@@ -93,7 +93,7 @@ def fetch_arxiv(query: str, max_results: int = 30) -> list:
             authors   = [a.find("atom:name", ns).text for a in entry.findall("atom:author", ns)]
             categories = [c.get("term") for c in entry.findall("atom:category", ns)]
             pdf_link  = next(
-                (l.get("href") for l in entry.findall("atom:link", ns) if l.get("title") == "pdf"),
+                (link.get("href") for link in entry.findall("atom:link", ns) if link.get("title") == "pdf"),
                 f"https://arxiv.org/pdf/{arxiv_id}"
             )
             papers.append({
