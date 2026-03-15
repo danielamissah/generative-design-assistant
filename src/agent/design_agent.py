@@ -113,7 +113,8 @@ class DesignAgent:
 
         if track:
             try:
-                mlflow.set_experiment("generative-design-assistant")
+                mlflow.set_tracking_uri(self.cfg["mlflow"]["tracking_uri"])
+                mlflow.set_experiment(self.cfg["mlflow"]["experiment_name"])
                 with mlflow.start_run(run_name="design_run"):
                     # Parameters
                     mlflow.log_params({

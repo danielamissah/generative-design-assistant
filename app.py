@@ -42,7 +42,7 @@ def run_agent(requirements_text: str):
         return
 
     # Step 1
-    yield ("⏳ **Step 1/4** — Parsing requirements...", "", "",
+    yield ("**Step 1/4** — Parsing requirements...", "", "",
            gr.update(visible=False), gr.update(visible=False),
            gr.update(visible=False), gr.update(visible=False),
            gr.update(visible=False), gr.update(visible=False))
@@ -51,7 +51,7 @@ def run_agent(requirements_text: str):
         requirements = agent.parser.parse(requirements_text)
 
         # Step 2
-        yield (f"⏳ **Step 2/4** — Retrieving engineering knowledge for **{requirements.get('component_name', 'component')}**...",
+        yield (f"**Step 2/4** — Retrieving engineering knowledge for **{requirements.get('component_name', 'component')}**...",
                "", "",
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
@@ -61,7 +61,7 @@ def run_agent(requirements_text: str):
         context   = agent.retriever.format_context(knowledge)
 
         # Step 3
-        yield ("⏳ **Step 3/4** — Generating 3 design alternatives...", "", "",
+        yield ("**Step 3/4** — Generating 3 design alternatives...", "", "",
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
@@ -69,7 +69,7 @@ def run_agent(requirements_text: str):
         alternatives = agent.generator.generate(requirements, context)
 
         # Step 4
-        yield ("⏳ **Step 4/4** — Evaluating alternatives and writing feasibility report...",
+        yield ("**Step 4/4** — Evaluating alternatives and writing feasibility report...",
                "", "",
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
@@ -114,7 +114,7 @@ def run_agent(requirements_text: str):
         for alt in alts:
             score  = ev.get("scores", {}).get(alt["id"], "N/A")
             risk   = ev.get("risk_assessment", {}).get(alt["id"], "MEDIUM")
-            marker = " ⭐ RECOMMENDED" if alt["id"] == rec_id else ""
+            marker = " RECOMMENDED" if alt["id"] == rec_id else ""
             alts_md += f"""### Alternative {alt['id']}: {alt['name']}{marker}
 
 | | |
@@ -157,7 +157,7 @@ def run_agent(requirements_text: str):
                gr.update(visible=False), gr.update(visible=False))
 
     except Exception as err:
-        yield (f"❌ Error: {str(err)}", "", "",
+        yield (f"Error: {str(err)}", "", "",
                gr.update(visible=True), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
@@ -197,7 +197,7 @@ def reset():
 with gr.Blocks(title="Generative Design Assistant") as demo:
 
     gr.Markdown("""
-    # ⚙️ Generative Design Assistant
+    # Generative Design Assistant
     ### AI-Powered Engineering Requirements Analysis & Design Generation
 
     Describe your engineering component requirements in plain text. The agent will:
@@ -206,7 +206,7 @@ with gr.Blocks(title="Generative Design Assistant") as demo:
     3. **Generate** 3 design alternatives with trade-off analysis
     4. **Evaluate** and recommend the best alternative with a feasibility report
 
-    *Inspired by BMW Group's Generative Design initiative*
+    You can export the full feasibility report as PDF or Word document for sharing and documentation.
     """)
 
     with gr.Row():
