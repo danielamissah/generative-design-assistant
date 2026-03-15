@@ -265,7 +265,7 @@ with gr.Blocks(title="Generative Design Assistant") as demo:
     gr.Markdown("""
     ---
     **Stack:** LangChain-style agent · arXiv + Semantic Scholar · ChromaDB · sentence-transformers · Mistral-7B / Ollama · FastAPI · Gradio  
-    **GitHub:** [generative-design-assistant](https://github.com/dkamissah/generative-design-assistant)
+    **GitHub:** [generative-design-assistant](https://github.com/danielamissah/generative-design-assistant)
     """)
 
 if __name__ == "__main__":
