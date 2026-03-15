@@ -156,8 +156,8 @@ def run_agent(requirements_text: str):
                gr.update(visible=True), gr.update(visible=True),
                gr.update(visible=False), gr.update(visible=False))
 
-    except Exception:
-        yield (f"❌ Error: {str(e)}", "", "",
+    except Exception as err:
+        yield (f"❌ Error: {str(err)}", "", "",
                gr.update(visible=True), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
@@ -264,7 +264,7 @@ with gr.Blocks(title="Generative Design Assistant") as demo:
     gr.Markdown("""
     ---
     **Stack:** LangChain-style agent · arXiv + Semantic Scholar · ChromaDB · sentence-transformers · Mistral-7B / Ollama · FastAPI · Gradio  
-    **GitHub:** [generative-design-assistant](https://github.com/dkamissah/generative-design-assistant)
+    **GitHub:** [generative-design-assistant](https://github.com/danielamissah/generative-design-assistant)
     """)
 
 if __name__ == "__main__":
