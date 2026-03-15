@@ -21,6 +21,7 @@ import time
 import yaml
 from loguru import logger
 
+import mlflow
 from src.tools.requirements_parser import RequirementsParser
 from src.tools.knowledge_retriever import KnowledgeRetriever
 from src.tools.design_generator import DesignGenerator
@@ -43,6 +44,7 @@ class DesignAgent:
     """
 
     def __init__(self, config_path="configs/config.yaml"):
+        self.cfg = load_config(config_path)
         logger.info("Initialising DesignAgent...")
         self.parser    = RequirementsParser(config_path)
         self.retriever = KnowledgeRetriever(config_path)
@@ -50,13 +52,15 @@ class DesignAgent:
         self.evaluator = FeasibilityEvaluator(config_path)
         logger.success("DesignAgent ready — 4 tools loaded")
 
-    def run(self, requirements_text: str, verbose: bool = True) -> dict:
+    def run(self, requirements_text: str, verbose: bool = True,
+             track: bool = True) -> dict:
         """
         Run the full generative design pipeline.
 
         Args:
             requirements_text: Free-text engineering requirements
             verbose:           Log each step
+            track:             Log run to MLflow
 
         Returns:
             Full result with requirements, alternatives, evaluation, and report
@@ -97,7 +101,7 @@ class DesignAgent:
         logger.success(f"Pipeline complete in {total_ms}ms")
         logger.success(f"Recommended: Alternative {evaluation.get('recommended', 'B')}")
 
-        return {
+        result = {
             "requirements":  requirements,
             "knowledge":     knowledge,
             "alternatives":  alternatives,
@@ -106,3 +110,36 @@ class DesignAgent:
             "pipeline_ms":   total_ms,
             "steps_completed": 4,
         }
+
+        if track:
+            try:
+                mlflow.set_experiment("generative-design-assistant")
+                with mlflow.start_run(run_name="design_run"):
+                    # Parameters
+                    mlflow.log_params({
+                        "component":       requirements.get("component_name", "unknown"),
+                        "priority":        requirements.get("priority", "unknown"),
+                        "n_alternatives":  len(alternatives),
+                        "recommended":     evaluation.get("recommended", "unknown"),
+                        "embedding_model": self.cfg["embeddings"]["model"],
+                        "llm_model":       self.cfg["llm"].get("hf_model", self.cfg["llm"].get("ollama_model", "")),
+                        "top_k":           self.cfg["retrieval"]["top_k"],
+                    })
+                    # Metrics
+                    scores = evaluation.get("scores", {})
+                    for alt_id, score in scores.items():
+                        mlflow.log_metric(f"score_alt_{alt_id}", float(score))
+                    mlflow.log_metric("pipeline_ms", total_ms)
+                    mlflow.log_metric("n_knowledge_sources", len(knowledge))
+                    # Artifact
+                    import json, tempfile, os
+                    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+                        json.dump(result["report"], f, indent=2)
+                        tmp = f.name
+                    mlflow.log_artifact(tmp, "report")
+                    os.unlink(tmp)
+                logger.info("MLflow run logged")
+            except Exception as e:
+                logger.warning(f"MLflow logging failed (non-critical): {e}")
+
+        return result
