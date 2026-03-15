@@ -157,7 +157,7 @@ def run_agent(requirements_text: str):
                gr.update(visible=False), gr.update(visible=False))
 
     except Exception:
-        yield (f"Error: {str(e)}", "", "",
+        yield (f"❌ Error: {str(e)}", "", "",
                gr.update(visible=True), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
@@ -197,7 +197,7 @@ def reset():
 with gr.Blocks(title="Generative Design Assistant") as demo:
 
     gr.Markdown("""
-    # Generative Design Assistant
+    # ⚙️ Generative Design Assistant
     ### AI-Powered Engineering Requirements Analysis & Design Generation
 
     Describe your engineering component requirements in plain text. The agent will:
@@ -219,8 +219,8 @@ with gr.Blocks(title="Generative Design Assistant") as demo:
 
             run_btn    = gr.Button("Generate Designs", variant="primary", elem_id="run-btn",   visible=True)
             reset_btn  = gr.Button("New Design Brief",                    elem_id="reset-btn",  visible=False)
-            export_btn  = gr.Button("Export PDF Report",  elem_id="export-btn", visible=False)
-            docx_btn    = gr.Button("Export Word Report", elem_id="export-btn", visible=False)
+            export_btn  = gr.Button("📄 Export PDF Report",  elem_id="export-btn", visible=False)
+            docx_btn    = gr.Button("📝 Export Word Report", elem_id="export-btn", visible=False)
             pdf_file    = gr.File(label="Download PDF",  visible=False)
             docx_file   = gr.File(label="Download Word", visible=False)
 
@@ -228,11 +228,11 @@ with gr.Blocks(title="Generative Design Assistant") as demo:
 
         with gr.Column(scale=2):
             with gr.Tabs():
-                with gr.Tab("Requirements"):
+                with gr.Tab("📋 Requirements"):
                     req_out = gr.Markdown()
                 with gr.Tab("🔧 Design Alternatives"):
                     alts_out = gr.Markdown()
-                with gr.Tab("Feasibility Report"):
+                with gr.Tab("📊 Feasibility Report"):
                     report_out = gr.Markdown()
 
     run_btn.click(
@@ -264,7 +264,7 @@ with gr.Blocks(title="Generative Design Assistant") as demo:
     gr.Markdown("""
     ---
     **Stack:** LangChain-style agent · arXiv + Semantic Scholar · ChromaDB · sentence-transformers · Mistral-7B / Ollama · FastAPI · Gradio  
-    **GitHub:** [generative-design-assistant](https://github.com/danielamissah/generative-design-assistant)
+    **GitHub:** [generative-design-assistant](https://github.com/dkamissah/generative-design-assistant)
     """)
 
 if __name__ == "__main__":
