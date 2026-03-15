@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import gradio as gr
 from src.agent.design_agent import DesignAgent
 from src.tools.pdf_exporter import export_pdf
+from src.tools.docx_exporter import export_docx
 
 agent      = DesignAgent()
 last_result = {}   # store last run for PDF export
@@ -37,11 +38,13 @@ def run_agent(requirements_text: str):
     if not requirements_text.strip():
         yield ("Please enter engineering requirements.", "", "",
                gr.update(visible=True), gr.update(visible=False),
+               gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
         return
 
     # Step 1
-    yield ("**Step 1/4** — Parsing requirements...", "", "",
+    yield ("⏳ **Step 1/4** — Parsing requirements...", "", "",
+           gr.update(visible=False), gr.update(visible=False),
            gr.update(visible=False), gr.update(visible=False),
            gr.update(visible=False), gr.update(visible=False))
 
@@ -49,8 +52,9 @@ def run_agent(requirements_text: str):
         requirements = agent.parser.parse(requirements_text)
 
         # Step 2
-        yield (f"**Step 2/4** — Retrieving engineering knowledge for **{requirements.get('component_name', 'component')}**...",
+        yield (f"⏳ **Step 2/4** — Retrieving engineering knowledge for **{requirements.get('component_name', 'component')}**...",
                "", "",
+               gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
 
@@ -58,15 +62,17 @@ def run_agent(requirements_text: str):
         context   = agent.retriever.format_context(knowledge)
 
         # Step 3
-        yield ("**Step 3/4** — Generating 3 design alternatives...", "", "",
+        yield ("⏳ **Step 3/4** — Generating 3 design alternatives...", "", "",
+               gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
 
         alternatives = agent.generator.generate(requirements, context)
 
         # Step 4
-        yield ("**Step 4/4** — Evaluating alternatives and writing feasibility report...",
+        yield ("⏳ **Step 4/4** — Evaluating alternatives and writing feasibility report...",
                "", "",
+               gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
 
@@ -148,11 +154,13 @@ def run_agent(requirements_text: str):
 
         yield (req_md, alts_md, full_report,
                gr.update(visible=False), gr.update(visible=True),
-               gr.update(visible=True), gr.update(visible=False))
+               gr.update(visible=True), gr.update(visible=True),
+               gr.update(visible=False), gr.update(visible=False))
 
     except Exception as e:
-        yield (f"Error: {str(e)}", "", "",
+        yield (f"❌ Error: {str(e)}", "", "",
                gr.update(visible=True), gr.update(visible=False),
+               gr.update(visible=False), gr.update(visible=False),
                gr.update(visible=False), gr.update(visible=False))
 
 
@@ -167,15 +175,27 @@ def export_to_pdf():
         return gr.update(visible=False)
 
 
+def export_to_docx():
+    global last_result
+    if not last_result:
+        return gr.update(visible=False)
+    try:
+        path = export_docx(last_result)
+        return gr.update(visible=True, value=path)
+    except Exception as e:
+        return gr.update(visible=False)
+
+
 def reset():
     global last_result
     last_result = {}
     return ("", "", "", "",
             gr.update(visible=True), gr.update(visible=False),
+            gr.update(visible=False), gr.update(visible=False),
             gr.update(visible=False), gr.update(visible=False))
 
 
-with gr.Blocks(css=CSS, title="Generative Design Assistant") as demo:
+with gr.Blocks(title="Generative Design Assistant") as demo:
 
     gr.Markdown("""
     # ⚙️ Generative Design Assistant
@@ -187,6 +207,7 @@ with gr.Blocks(css=CSS, title="Generative Design Assistant") as demo:
     3. **Generate** 3 design alternatives with trade-off analysis
     4. **Evaluate** and recommend the best alternative with a feasibility report
 
+    *Inspired by BMW Group's Generative Design initiative*
     """)
 
     with gr.Row():
@@ -199,8 +220,10 @@ with gr.Blocks(css=CSS, title="Generative Design Assistant") as demo:
 
             run_btn    = gr.Button("Generate Designs", variant="primary", elem_id="run-btn",   visible=True)
             reset_btn  = gr.Button("New Design Brief",                    elem_id="reset-btn",  visible=False)
-            export_btn = gr.Button("📄 Export PDF Report",                elem_id="export-btn", visible=False)
-            pdf_file   = gr.File(label="Download Report", visible=False)
+            export_btn  = gr.Button("📄 Export PDF Report",  elem_id="export-btn", visible=False)
+            docx_btn    = gr.Button("📝 Export Word Report", elem_id="export-btn", visible=False)
+            pdf_file    = gr.File(label="Download PDF",  visible=False)
+            docx_file   = gr.File(label="Download Word", visible=False)
 
             gr.Examples(examples=EXAMPLES, inputs=requirements_input, label="Example Requirements")
 
@@ -216,7 +239,7 @@ with gr.Blocks(css=CSS, title="Generative Design Assistant") as demo:
     run_btn.click(
         fn      = run_agent,
         inputs  = [requirements_input],
-        outputs = [req_out, alts_out, report_out, run_btn, reset_btn, export_btn, pdf_file],
+        outputs = [req_out, alts_out, report_out, run_btn, reset_btn, export_btn, docx_btn, pdf_file, docx_file],
         show_progress = "hidden",
     )
 
@@ -226,18 +249,24 @@ with gr.Blocks(css=CSS, title="Generative Design Assistant") as demo:
         outputs = [pdf_file],
     )
 
+    docx_btn.click(
+        fn      = export_to_docx,
+        inputs  = [],
+        outputs = [docx_file],
+    )
+
     reset_btn.click(
         fn      = reset,
         inputs  = [],
         outputs = [requirements_input, req_out, alts_out, report_out,
-                   run_btn, reset_btn, export_btn, pdf_file],
+                   run_btn, reset_btn, export_btn, docx_btn, pdf_file, docx_file],
     )
 
     gr.Markdown("""
     ---
     **Stack:** LangChain-style agent · arXiv + Semantic Scholar · ChromaDB · sentence-transformers · Mistral-7B / Ollama · FastAPI · Gradio  
-    **GitHub:** [generative-design-assistant](https://github.com/danielamissah/generative-design-assistant)
+    **GitHub:** [generative-design-assistant](https://github.com/dkamissah/generative-design-assistant)
     """)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    demo.launch(server_name="0.0.0.0", server_port=7860, css=CSS)

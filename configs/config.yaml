@@ -31,3 +31,7 @@ serving:
 outputs:
   reports_dir: "outputs/reports"
   designs_dir: "outputs/designs"
+
+mlflow:
+  tracking_uri: "http://localhost:5001"
+  experiment_name: "generative-design-assistant"
