@@ -8,7 +8,7 @@
 
 ---
 
-## 🔴 Live Demo
+## Live Demo
 
 **[huggingface.co/spaces/dkamissah/generative-design-assistant](https://huggingface.co/spaces/dkamissah/generative-design-assistant)**
 
